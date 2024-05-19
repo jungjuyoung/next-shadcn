@@ -28,7 +28,7 @@ export default function Navbar() {
 							<Link className="flex items-center" href={'/create'}>
 								Create Post
 							</Link>
-							<Link className="flex items-center" href={'/blog'}>
+							<Link className="flex items-center" href={'/blog/1'}>
 								blog
 							</Link>
 						</div>
