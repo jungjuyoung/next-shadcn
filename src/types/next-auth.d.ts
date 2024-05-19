@@ -1,4 +1,4 @@
-import { AuthUser } from '@/model/user';
+import { AuthUser } from '@/model/User';
 import NextAuth, { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {

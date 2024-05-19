@@ -20,7 +20,7 @@ export default function Navbar() {
 		<div className="sticky shadow-lg top-0 z-100 w-full border-b bg-white">
 			<nav className="container flex max-w-7xl mx-auto h-16 items-center space-x-4">
 				<div className="flex-1">
-					<div className="flex max-w-4xl mx-auto border items-center justify-center space-x-4">
+					<div className="flex max-w-4xl mx-auto items-center justify-center space-x-4">
 						<Link href={'/'} className="flex-1 mr-auto">
 							Logo
 						</Link>

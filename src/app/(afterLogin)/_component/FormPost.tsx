@@ -84,9 +84,9 @@ const FormPost: FC<FormPostProps> = ({ submit, isEditing }) => {
 						<SelectContent>
 							<SelectGroup>
 								<SelectLabel>Select tags</SelectLabel>
-								{dataTags?.map(item => (
-									<SelectItem key={item.name} value={item.name}>
-										{item.name}
+								{dataTags?.map(({ id, name }) => (
+									<SelectItem key={id} value={name}>
+										{name}
 									</SelectItem>
 								))}
 							</SelectGroup>
