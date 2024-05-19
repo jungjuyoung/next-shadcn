@@ -9,6 +9,13 @@ const User = [
 	}
 ];
 
+const Tags = [
+	{ id: 1, name: 'javascript' },
+	{ id: 2, name: 'react' },
+	{ id: 2, name: 'vue' },
+	{ id: 2, name: 'nextjs' }
+];
+
 export const handlers = [
 	http.post('/auth/login', async ({ request }) => {
 		const { email, password } = (await request.json()) as JsonObject;
@@ -27,13 +34,19 @@ export const handlers = [
 			}
 		);
 	}),
-
 	http.post('/auth/logout', () => {
 		console.log('[msw] 로그아웃');
 		return new HttpResponse(null, {
 			headers: {
 				'Set-Cookie': 'connect.sid=;HttpOnly;Path=/;Max-Age=0'
 			}
+		});
+	}),
+	// tags
+	http.get('/tags', ({ params }) => {
+		const { id } = params;
+		return HttpResponse.json(Tags, {
+			status: 200
 		});
 	})
 ];

@@ -27,15 +27,28 @@ import {
 	SelectValue
 } from '@/components/ui/select';
 import { FormInputPost } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 
 interface FormPostProps {
 	submit: SubmitHandler<FormInputPost>;
 	isEditing: boolean;
 }
 
+interface Tags {
+	id: number;
+	name: string;
+}
 const FormPost: FC<FormPostProps> = ({ submit, isEditing }) => {
 	const { register, handleSubmit } = useForm<FormInputPost>();
-
+	// fetch tags
+	const { data: dataTags, isLoading } = useQuery<Tags[]>({
+		queryKey: ['tags'],
+		queryFn: async () => {
+			const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/tags`);
+			return res.json();
+		}
+	});
+	console.log('data: ', dataTags);
 	return (
 		<form
 			onSubmit={handleSubmit(submit)}
@@ -60,21 +73,27 @@ const FormPost: FC<FormPostProps> = ({ submit, isEditing }) => {
 				/>
 			</div>
 
-			<div className="grid w-full gap-1.5 space-y-4">
-				<Select {...register('tag')} defaultValue="all">
-					<SelectTrigger className="w-full">
-						<SelectValue placeholder="Select a tags" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectGroup>
-							<SelectLabel>Select tags</SelectLabel>
-							<SelectItem value="all">All</SelectItem>
-							<SelectItem value="talk">Talk</SelectItem>
-							<SelectItem value="development">Development</SelectItem>
-						</SelectGroup>
-					</SelectContent>
-				</Select>
-			</div>
+			{isLoading ? (
+				<div>Loading...</div>
+			) : (
+				<div className="grid w-full gap-1.5 space-y-4">
+					<Select {...register('tag')} defaultValue="all">
+						<SelectTrigger className="w-full">
+							<SelectValue placeholder="Select a tags" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel>Select tags</SelectLabel>
+								{dataTags?.map(item => (
+									<SelectItem key={item.name} value={item.name}>
+										{item.name}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</div>
+			)}
 
 			<Button type="submit" className="w-full">
 				{isEditing ? 'UPDATE' : 'CREATE'}

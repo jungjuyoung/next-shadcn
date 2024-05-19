@@ -12,5 +12,5 @@ export async function middleware(request: NextRequest) {
 
 // The middleware above will only work for routers that are matched below "Matched Paths".
 export const config = {
-	matcher: ['/', '/dashboard']
+	matcher: ['/', '/dashboard', '/blog/:path*']
 };
