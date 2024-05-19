@@ -1,15 +1,24 @@
 'use client';
 
-import { useState, ChangeEventHandler, FormEventHandler } from 'react';
+import { ChangeEventHandler, FormEventHandler, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { signIn } from 'next-auth/react';
 
-export default function ProfileForm() {
+const showMessage = (message: string) => {
+	if (message === 'no_email') return '이메일을 입력해주세요';
+	if (message === 'no_password') return '비밀번호를  입력해주세요';
+	if (message === 'no_matched') return '아이디와 비밀번호가 일치하지 않습니다.';
+	if (message === 'no_such_user') return '올바른 유저가 아닙니다.';
+	return '';
+};
+
+export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [message, setMessage] = useState({ message: '' });
 	const router = useRouter();
 
 	const onChangeEmail: ChangeEventHandler<HTMLInputElement> = e => {
@@ -21,30 +30,27 @@ export default function ProfileForm() {
 
 	const onSubmit: FormEventHandler<HTMLFormElement> = async e => {
 		e.preventDefault();
-		console.log('email: ', email, 'password: ', password);
+		setMessage({ message: '' });
 
+		console.log('LoginPage email: ', email, 'password: ', password);
 		let shouldRedirect = false;
-		console.log('env.AUTH_BASE_URL: ', process.env.NEXT_PUBLIC_AUTH_BASE_URL);
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/auth/login`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ email, password }),
-					credentials: 'include'
-				}
+			const res = await signIn('credentials', {
+				email,
+				password,
+				nickname: '',
+				redirect: false
+			});
+			console.log(
+				'LoginPage singIn callback res: ',
+				res,
+				'redirected to path: "/" !!!!'
 			);
-			console.log(res.status, await res.json());
-			shouldRedirect = true;
+			router.push('/');
 		} catch (err) {
-			console.log(err);
-		}
-
-		if (shouldRedirect) {
-			router.push('/dashboard');
+			console.error(err);
+			setMessage({ message: 'no_matched' });
+			return null;
 		}
 	};
 
@@ -54,20 +60,23 @@ export default function ProfileForm() {
 				<div className="grid w-full max-w-sm items-center gap-1.5">
 					<Label htmlFor="email">Email</Label>
 					<Input
-						onChange={onChangeEmail}
 						type="text"
 						id="email"
 						placeholder="Email"
+						onChange={onChangeEmail}
 					/>
 				</div>
 				<div className="grid w-full max-w-sm items-center gap-1.5">
 					<Label htmlFor="password">Password</Label>
 					<Input
-						onChange={onChangePassword}
 						type="password"
 						id="password"
 						placeholder="password"
+						onChange={onChangePassword}
 					/>
+				</div>
+				<div className="text-ember-500 font-bold text-xl">
+					{showMessage('')}
 				</div>
 				<Button type="submit" className="w-full">
 					Login
